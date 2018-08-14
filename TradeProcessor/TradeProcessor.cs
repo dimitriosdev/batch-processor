@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
+using System.Linq;
 
 namespace TradeProcessor
 {
@@ -15,19 +16,44 @@ namespace TradeProcessor
     {
         public void ProcessTrades(Stream stream)
         {
-            // read rows
-            var lines = new List<string>();
-            using (var reader = new StreamReader(stream))
+            var lines = ReadTradeData(stream);
+            var trades = ParseTrades(lines);
+            StoreTrades(trades);  
+        }
+
+        private void StoreTrades(IEnumerable<TradeRecord> trades)
+        {
+            using (var connection = new SqlConnection("Data Source = (local); Initial Catalog = TradeDatabase; Integrated Security = True"))
             {
-                string line;
-                while ((line = reader.ReadLine()) != null)
+                connection.Open();
+                using (var transaction = connection.BeginTransaction())
                 {
-                    lines.Add(line);
+                    foreach (var trade in trades)
+                    {
+                        var command = connection.CreateCommand();
+                        command.Transaction = transaction;
+                        command.CommandType = System.Data.CommandType.StoredProcedure;
+                        command.CommandText = "dbo.insert_trade";
+                        command.Parameters.AddWithValue("@sourceCurrency", trade.
+                        SourceCurrency);
+                        command.Parameters.AddWithValue("@destinationCurrency", trade.
+                        DestinationCurrency);
+                        command.Parameters.AddWithValue("@lots", trade.Lots);
+                        command.Parameters.AddWithValue("@price", trade.Price);
+                        command.ExecuteNonQuery();
+                    }
+                    transaction.Commit();
                 }
+                connection.Close();
             }
+            Console.WriteLine("INFO: {0} trades processed", trades.Count());
+        }
+
+        private IEnumerable<TradeRecord> ParseTrades(IEnumerable<string> tradeData)
+        {
             var trades = new List<TradeRecord>();
             var lineCount = 1;
-            foreach (var line in lines)
+            foreach (var line in tradeData)
             {
                 var fields = line.Split(new char[] { ',' });
                 if (fields.Length != 3)
@@ -65,30 +91,21 @@ namespace TradeProcessor
                 trades.Add(trade);
                 lineCount++;
             }
-            using (var connection = new SqlConnection("Data Source = (local); Initial Catalog = TradeDatabase; Integrated Security = True"))
+            return trades;
+        }
+
+        private IEnumerable<string> ReadTradeData(Stream stream)
+        {
+            var tradeData = new List<string>();
+            using (var reader = new StreamReader(stream))
             {
-                connection.Open();
-                using (var transaction = connection.BeginTransaction())
+                string line;
+                while ((line = reader.ReadLine()) != null)
                 {
-                    foreach (var trade in trades)
-                    {
-                        var command = connection.CreateCommand();
-                        command.Transaction = transaction;
-                        command.CommandType = System.Data.CommandType.StoredProcedure;
-                        command.CommandText = "dbo.insert_trade";
-                        command.Parameters.AddWithValue("@sourceCurrency", trade.
-                        SourceCurrency);
-                        command.Parameters.AddWithValue("@destinationCurrency", trade.
-                        DestinationCurrency);
-                        command.Parameters.AddWithValue("@lots", trade.Lots);
-                        command.Parameters.AddWithValue("@price", trade.Price);
-                        command.ExecuteNonQuery();
-                    }
-                    transaction.Commit();
+                    tradeData.Add(line);
                 }
-                connection.Close();
             }
-            Console.WriteLine("INFO: {0} trades processed", trades.Count);
+            return tradeData;
         }
 
         private static float LotSize = 100000f;
