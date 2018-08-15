@@ -1,6 +1,6 @@
 ﻿namespace TradeProcessor
 {
-    internal class TradeRecord
+    public class TradeRecord
     {
         public string DestinationCurrency { get; set; }
         public float Lots { get; set; }
