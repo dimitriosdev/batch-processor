@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.IO;
 using System.Linq;
+using TradeProcessor.Contracts;
 
 namespace TradeProcessor
 {
@@ -14,12 +14,20 @@ namespace TradeProcessor
     /// </summary>
     public class TradeProcessor
     {
-        public void ProcessTrades(Stream stream)
+
+        public TradeProcessor(ITradeDataProvider tradeDataProvider)
         {
-            var lines = ReadTradeData(stream);
+            this.tradeDataProvider = tradeDataProvider;
+        }
+        
+        public void ProcessTrades()
+        {
+            var lines = tradeDataProvider.GetTradeData();
             var trades = ParseTrades(lines);
             StoreTrades(trades);  
         }
+
+        private readonly ITradeDataProvider tradeDataProvider;
 
         private void StoreTrades(IEnumerable<TradeRecord> trades)
         {
@@ -120,20 +128,6 @@ namespace TradeProcessor
         private void LogMessage(string message, params object[] args)
         {
             Console.WriteLine(message, args);
-        }
-
-        private IEnumerable<string> ReadTradeData(Stream stream)
-        {
-            var tradeData = new List<string>();
-            using (var reader = new StreamReader(stream))
-            {
-                string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    tradeData.Add(line);
-                }
-            }
-            return tradeData;
         }
 
         private static float LotSize = 100000f;
