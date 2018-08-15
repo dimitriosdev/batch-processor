@@ -10,7 +10,6 @@ namespace TradeProcessor
     /// </summary>
     public class TradeProcessor
     {
-
         public TradeProcessor(ITradeDataProvider tradeDataProvider, ITradeParser tradeParser, ITradeStorage tradeStorage)
         {
             this.tradeDataProvider = tradeDataProvider;

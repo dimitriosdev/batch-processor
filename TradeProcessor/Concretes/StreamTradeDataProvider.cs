@@ -2,7 +2,7 @@
 using System.IO;
 using TradeProcessor.Contracts;
 
-namespace TradeProcessor
+namespace TradeProcessor.Concretes
 {
     public class StreamTradeDataProvider : ITradeDataProvider
     {

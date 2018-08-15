@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using TradeProcessor.Contracts;
+using TradeProcessor.Models;
 
-namespace TradeProcessor
+namespace TradeProcessor.Concretes
 {
     public class AdoNetTradeStorage : ITradeStorage
     {

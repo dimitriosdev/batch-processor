@@ -4,15 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{81B01C85-0977-437C-871D-EAC23B7D2E42}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{89E1B650-15D6-4984-A562-5A5F42193A0F}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TradeProcessor</RootNamespace>
-    <AssemblyName>TradeProcessor</AssemblyName>
+    <RootNamespace>TradeProcessor.ConsoleApp</RootNamespace>
+    <AssemblyName>TradeProcessor.ConsoleApp</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -40,15 +43,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Concretes\AdoNetTradeStorage.cs" />
-    <Compile Include="Contracts\ITradeDataProvider.cs" />
-    <Compile Include="Contracts\ITradeParser.cs" />
-    <Compile Include="Contracts\ITradeStorage.cs" />
-    <Compile Include="Concretes\SimpleTradeParser.cs" />
-    <Compile Include="Concretes\StreamTradeDataProvider.cs" />
-    <Compile Include="TradeProcessor.cs" />
+    <Compile Include="Dependancies.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Models\TradeRecord.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TradeProcessor\TradeProcessor.csproj">
+      <Project>{81b01c85-0977-437c-871d-eac23b7d2e42}</Project>
+      <Name>TradeProcessor</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

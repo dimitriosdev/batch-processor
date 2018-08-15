@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using TradeProcessor.Contracts;
+using TradeProcessor.Models;
 
-namespace TradeProcessor
+namespace TradeProcessor.Concretes
 {
     public class SimpleTradeParser : ITradeParser
     {
